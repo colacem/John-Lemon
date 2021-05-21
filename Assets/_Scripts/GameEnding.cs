@@ -10,6 +10,8 @@ public class GameEnding : MonoBehaviour
     public GameObject player;
     public CanvasGroup exitBackgroundImageCanvasGroup;
     public CanvasGroup caughtBackgroundImageCanvasGroup;
+    public AudioSource exitAudio, caughtAudio;
+    bool hasAudioPlayed;
     private float timer;
     private void OnTriggerEnter(Collider other) {
         if (other.gameObject==player)
@@ -20,35 +22,41 @@ public class GameEnding : MonoBehaviour
     private void Update() {
         if (isPlayerAtExit)
         {
-            EndLevel(exitBackgroundImageCanvasGroup,false);
+            EndLevel(exitBackgroundImageCanvasGroup,false,exitAudio);
         }
         else if (isPlayerCaught)
         {
-            EndLevel(caughtBackgroundImageCanvasGroup,true);
+            EndLevel(caughtBackgroundImageCanvasGroup,true,caughtAudio);
         }
     }
     /// <summary>
     /// Desvanece el canvas group y finaliza el juego
     /// </summary>
     /// <param name="imageCanvasGroup"> imagen de finalizacion</param>
-    void EndLevel(CanvasGroup imageCanvasGroup, bool doRestart)
+    void EndLevel(CanvasGroup imageCanvasGroup, bool doRestart, AudioSource audioSource)
     {   
+        if (hasAudioPlayed==false)
+        {
+            audioSource.Play();
+            hasAudioPlayed=true;
+        }
         timer += Time.deltaTime;
-            imageCanvasGroup.alpha=timer/fadeDuration;
-            if (timer > Mathf.Clamp(DisplayImageDuration + DisplayImageDuration,0,1))
+        imageCanvasGroup.alpha=timer/fadeDuration;
+        if (timer > Mathf.Clamp(DisplayImageDuration + DisplayImageDuration,0,1))
+        {
+            Debug.Log("Fin de la Partida");
+            if (doRestart)
             {
-                Debug.Log("Fin de la Partida");
-                if (doRestart)
-                {
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-                }
-                else
-                {
-                    Application.Quit();
-                }
-                //SceneManager.LoadScene("");
-                
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                hasAudioPlayed=false;
             }
+            else
+            {
+                Application.Quit();
+            }
+            //SceneManager.LoadScene("");
+            
+        }
     }
 
     public void CatchPlayer()
