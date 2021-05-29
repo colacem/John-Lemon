@@ -28,6 +28,11 @@ public class GameEnding : MonoBehaviour
         {
             EndLevel(caughtBackgroundImageCanvasGroup,true,caughtAudio);
         }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+            Debug.Log("Salida");
+        }
     }
     /// <summary>
     /// Desvanece el canvas group y finaliza el juego
